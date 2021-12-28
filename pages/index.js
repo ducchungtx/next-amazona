@@ -48,7 +48,9 @@ export default function Home(props) {
 
 export async function getServerSideProps() {
   await db.connect();
-  const products = await Product.find().learn();
+  const products = await Product.find({}).learn();
+  console.log('products', products[0]);
+  // console.log('newProducts', newProducts);
   await db.disconnect();
   return {
     props: {
