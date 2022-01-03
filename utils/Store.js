@@ -46,6 +46,9 @@ function reducer(state, action) {
     case 'SAVE_PAYMENT_METHOD': {
       return { ...state, cart: { ...state.cart, paymentMethod: action.payload } };
     }
+    case 'CART_CLEAR': {
+      return { ...state, cart: { ...state.cart, cartItems: [] } };
+    }
     case 'USER_LOGIN': {
       return { ...state, userInfo: action.payload };
     }

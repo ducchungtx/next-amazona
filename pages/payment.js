@@ -33,7 +33,7 @@ export default function Payment() {
     } else {
       Cookies.set('paymentMethod', paymentMethod);
       dispatch({ type: 'SAVE_PAYMENT_METHOD', payload: paymentMethod });
-      router.push('/confirmation');
+      router.push('/placeorder');
     }
   }
 
@@ -49,9 +49,9 @@ export default function Payment() {
             <FormControl componen="fieldset">
               <RadioGroup aria-label="Payment Method" name='paymentMethod' value={paymentMethod}
                 onChange={e => setPaymentMethod(e.target.value)}>
-                <FormControlLabel value='paypal' control={<Radio />} label='Paypal' />
-                <FormControlLabel value='stripe' control={<Radio />} label='Stripe' />
-                <FormControlLabel value='cash' control={<Radio />} label='Cash' />
+                <FormControlLabel value='Paypal' control={<Radio />} label='Paypal' />
+                <FormControlLabel value='Stripe' control={<Radio />} label='Stripe' />
+                <FormControlLabel value='Cash' control={<Radio />} label='Cash' />
               </RadioGroup>
             </FormControl>
           </ListItem>
