@@ -1,24 +1,34 @@
-import React, { useState, useContext, useEffect } from 'react';
-import { Button, List, ListItem, TextField, Typography, Link } from '@material-ui/core';
-import NextLink from 'next/link';
+import {
+  List,
+  ListItem,
+  Typography,
+  TextField,
+  Button,
+  Link,
+} from '@material-ui/core';
 import axios from 'axios';
 import { useRouter } from 'next/router';
-import Cookies from 'js-cookie';
-import { useForm, Controller } from 'react-hook-form';
-import { useSnackbar } from 'notistack';
-
+import NextLink from 'next/link';
+import React, { useContext, useEffect } from 'react';
 import Layout from '../components/Layout';
-import useStyles from '../utils/styles';
 import { Store } from '../utils/Store';
+import useStyles from '../utils/styles';
+import Cookies from 'js-cookie';
+import { Controller, useForm } from 'react-hook-form';
+import { useSnackbar } from 'notistack';
+import { getError } from '../utils/error';
 
-export default function login() {
-  const { handleSubmit, control, formState: { errors } } = useForm();
+export default function Login() {
+  const {
+    handleSubmit,
+    control,
+    formState: { errors },
+  } = useForm();
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const router = useRouter();
   const { redirect } = router.query; // login?redirect=/shipping
   const { state, dispatch } = useContext(Store);
   const { userInfo } = state;
-
   useEffect(() => {
     if (userInfo) {
       router.push('/');
@@ -27,31 +37,29 @@ export default function login() {
 
   const classes = useStyles();
   const submitHandler = async ({ email, password }) => {
+    closeSnackbar();
     try {
       const { data } = await axios.post('/api/users/login', {
         email,
         password,
       });
       dispatch({ type: 'USER_LOGIN', payload: data });
-      Cookies.set('userInfo', JSON.stringify(data));
+      Cookies.set('userInfo', data);
       router.push(redirect || '/');
+    } catch (err) {
+      enqueueSnackbar(getError(err), { variant: 'error' });
     }
-    catch (err) {
-      console.log('err.response.data', err.response.data);
-      enqueueSnackbar(err.response.data ? err.response.data.msg : err.message, { variant: 'error' });
-    }
-  }
-
-  return(
+  };
+  return (
     <Layout title="Login">
       <form onSubmit={handleSubmit(submitHandler)} className={classes.form}>
-        <Typography component='h1' variant='h1'>
+        <Typography component="h1" variant="h1">
           Login
         </Typography>
         <List>
           <ListItem>
             <Controller
-              name='email'
+              name="email"
               control={control}
               defaultValue=""
               rules={{
@@ -60,23 +68,27 @@ export default function login() {
               }}
               render={({ field }) => (
                 <TextField
-                variant="outlined"
-                fullWidth
-                id="email"
-                label="Email"
-                inputProps={{ type: 'email' }}
-                error={Boolean(errors.email)}
-                helperText={errors.email ? errors.email.type === 'parten' ? 'Email is not valid' : 'Email is required' : ''}
-                {...field}
-              >
-              </TextField>
+                  variant="outlined"
+                  fullWidth
+                  id="email"
+                  label="Email"
+                  inputProps={{ type: 'email' }}
+                  error={Boolean(errors.email)}
+                  helperText={
+                    errors.email
+                      ? errors.email.type === 'pattern'
+                        ? 'Email is not valid'
+                        : 'Email is required'
+                      : ''
+                  }
+                  {...field}
+                ></TextField>
               )}
-            >
-            </Controller>
+            ></Controller>
           </ListItem>
           <ListItem>
             <Controller
-              name='password'
+              name="password"
               control={control}
               defaultValue=""
               rules={{
@@ -89,15 +101,19 @@ export default function login() {
                   fullWidth
                   id="password"
                   label="Password"
-                  inputProps={{ type: 'password'}}
+                  inputProps={{ type: 'password' }}
                   error={Boolean(errors.password)}
-                  helperText={errors.password ? errors.password.type === 'minLength' ? 'Password must be at least 6 characters' : 'Password is required' : ''}
+                  helperText={
+                    errors.password
+                      ? errors.password.type === 'minLength'
+                        ? 'Password length is more than 5'
+                        : 'Password is required'
+                      : ''
+                  }
                   {...field}
-                >
-                </TextField>
+                ></TextField>
               )}
-            >
-            </Controller>
+            ></Controller>
           </ListItem>
           <ListItem>
             <Button variant="contained" type="submit" fullWidth color="primary">
@@ -105,7 +121,7 @@ export default function login() {
             </Button>
           </ListItem>
           <ListItem>
-            Don't have an account? &nbsp;
+            Dont have an account? &nbsp;
             <NextLink href={`/register?redirect=${redirect || '/'}`} passHref>
               <Link>Register</Link>
             </NextLink>
@@ -113,5 +129,5 @@ export default function login() {
         </List>
       </form>
     </Layout>
-  )
+  );
 }
