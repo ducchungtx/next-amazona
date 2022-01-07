@@ -139,7 +139,7 @@ export default function Layout({ title, description, children }) {
                     {userInfo.isAdmin && (
                       <MenuItem
                         onClick={(e) =>
-                          loginMenuCloseHandler(e, '/admin/dashboard')
+                          loginMenuCloseHandler(e, '/admin/orders')
                         }
                       >
                         Admin Dashboard
