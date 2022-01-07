@@ -44,13 +44,13 @@ export default function Shipping() {
       type: 'SAVE_SHIPPING_ADDRESS',
       payload: { fullName, address, city, postalCode, country },
     });
-    Cookies.set('shippingAddress', {
+    Cookies.set('shippingAddress', JSON.stringify({
       fullName,
       address,
       city,
       postalCode,
       country,
-    });
+    }));
     router.push('/payment');
   };
   return (
