@@ -36,7 +36,7 @@ function Profile() {
 
   useEffect(() => {
     if (!userInfo) {
-      return router.push('/login'); 
+      return router.push('/login');
     }
     setValue('name', userInfo.name);
     setValue('email', userInfo.email);

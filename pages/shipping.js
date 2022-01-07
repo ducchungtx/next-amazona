@@ -7,12 +7,11 @@ import {
 } from '@material-ui/core';
 import { useRouter } from 'next/router';
 import React, { useContext, useEffect } from 'react';
-import Cookies from 'js-cookie';
-import { Controller, useForm } from 'react-hook-form';
-
 import Layout from '../components/Layout';
 import { Store } from '../utils/Store';
 import useStyles from '../utils/styles';
+import Cookies from 'js-cookie';
+import { Controller, useForm } from 'react-hook-form';
 import CheckoutWizard from '../components/CheckoutWizard';
 
 export default function Shipping() {
@@ -20,11 +19,14 @@ export default function Shipping() {
     handleSubmit,
     control,
     formState: { errors },
-    setValue
+    setValue,
   } = useForm();
   const router = useRouter();
   const { state, dispatch } = useContext(Store);
-  const { userInfo, cart: { shippingAddress } } = state;
+  const {
+    userInfo,
+    cart: { shippingAddress },
+  } = state;
   useEffect(() => {
     if (!userInfo) {
       router.push('/login?redirect=/shipping');
@@ -38,20 +40,17 @@ export default function Shipping() {
 
   const classes = useStyles();
   const submitHandler = ({ fullName, address, city, postalCode, country }) => {
-    dispatch({ type: 'SAVE_SHIPPING_ADDRESS', payload: {
+    dispatch({
+      type: 'SAVE_SHIPPING_ADDRESS',
+      payload: { fullName, address, city, postalCode, country },
+    });
+    Cookies.set('shippingAddress', {
       fullName,
       address,
       city,
       postalCode,
-      country
-    } });
-    Cookies.set('shippingAddress', JSON.stringify({
-      fullName,
-      address,
-      city,
-      postalCode,
-      country
-    }));
+      country,
+    });
     router.push('/payment');
   };
   return (
@@ -76,14 +75,13 @@ export default function Shipping() {
                   variant="outlined"
                   fullWidth
                   id="fullName"
-                  label="Fullname"
-                  inputProps={{ type: 'text' }}
+                  label="Full Name"
                   error={Boolean(errors.fullName)}
                   helperText={
                     errors.fullName
                       ? errors.fullName.type === 'minLength'
-                        ? 'Fullname length is more than 1'
-                        : 'Fullname is required'
+                        ? 'Full Name length is more than 1'
+                        : 'Full Name is required'
                       : ''
                   }
                   {...field}
@@ -91,7 +89,6 @@ export default function Shipping() {
               )}
             ></Controller>
           </ListItem>
-
           <ListItem>
             <Controller
               name="address"
@@ -107,11 +104,10 @@ export default function Shipping() {
                   fullWidth
                   id="address"
                   label="Address"
-                  inputProps={{ type: 'text' }}
-                  error={Boolean(errors.fullName)}
+                  error={Boolean(errors.address)}
                   helperText={
-                    errors.fullName
-                      ? errors.fullName.type === 'minLength'
+                    errors.address
+                      ? errors.address.type === 'minLength'
                         ? 'Address length is more than 1'
                         : 'Address is required'
                       : ''
@@ -121,7 +117,6 @@ export default function Shipping() {
               )}
             ></Controller>
           </ListItem>
-
           <ListItem>
             <Controller
               name="city"
@@ -137,7 +132,6 @@ export default function Shipping() {
                   fullWidth
                   id="city"
                   label="City"
-                  inputProps={{ type: 'text' }}
                   error={Boolean(errors.city)}
                   helperText={
                     errors.city
@@ -151,7 +145,6 @@ export default function Shipping() {
               )}
             ></Controller>
           </ListItem>
-
           <ListItem>
             <Controller
               name="postalCode"
@@ -167,7 +160,6 @@ export default function Shipping() {
                   fullWidth
                   id="postalCode"
                   label="Postal Code"
-                  inputProps={{ type: 'text' }}
                   error={Boolean(errors.postalCode)}
                   helperText={
                     errors.postalCode
@@ -181,7 +173,6 @@ export default function Shipping() {
               )}
             ></Controller>
           </ListItem>
-
           <ListItem>
             <Controller
               name="country"
@@ -197,7 +188,6 @@ export default function Shipping() {
                   fullWidth
                   id="country"
                   label="Country"
-                  inputProps={{ type: 'text' }}
                   error={Boolean(errors.country)}
                   helperText={
                     errors.country
@@ -211,7 +201,6 @@ export default function Shipping() {
               )}
             ></Controller>
           </ListItem>
-
           <ListItem>
             <Button variant="contained" type="submit" fullWidth color="primary">
               Continue

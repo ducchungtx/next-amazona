@@ -7,9 +7,8 @@ import db from '../../../utils/db';
 import { onError } from '../../../utils/error';
 
 const handler = nc({
-  onError
+  onError,
 });
-
 handler.use(isAuth);
 
 handler.get(async (req, res) => {
@@ -21,14 +20,21 @@ handler.get(async (req, res) => {
     {
       $group: {
         _id: null,
-        sales: { $sum: '$totalPrice' }
-      }
-    }
+        sales: { $sum: '$totalPrice' },
+      },
+    },
   ]);
-
-  const ordersPrice = ordersPriceGroup.length > 0 ? ordersPriceGroup[0].sales : 0;
-  
-  res.status(201).json({ ordersCount, productsCount, usersCount, ordersPrice });
+  const ordersPrice =
+    ordersPriceGroup.length > 0 ? ordersPriceGroup[0].sales : 0;
+  const salesData = await Order.aggregate([
+    {
+      $group: {
+        _id: { $dateToString: { format: '%Y-%m', date: '$createdAt' } },
+        totalSales: { $sum: '$totalPrice' },
+      },
+    },
+  ]);
+  res.send({ ordersCount, productsCount, usersCount, ordersPrice, salesData });
 });
 
 export default handler;

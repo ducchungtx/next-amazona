@@ -1,7 +1,6 @@
-import { useEffect } from 'react';
+import { PayPalScriptProvider } from '@paypal/react-paypal-js';
 import { SnackbarProvider } from 'notistack';
-import { PayPalScriptProvider } from "@paypal/react-paypal-js";
-
+import { useEffect } from 'react';
 import '../styles/globals.css';
 import { StoreProvider } from '../utils/Store';
 

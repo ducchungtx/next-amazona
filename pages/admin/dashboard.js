@@ -10,11 +10,12 @@ import {
   ListItem,
   Typography,
   Card,
+  Button,
   ListItemText,
   CardContent,
   CardActions,
-  Button,
 } from '@material-ui/core';
+import { Bar } from 'react-chartjs-2';
 import { getError } from '../../utils/error';
 import { Store } from '../../utils/Store';
 import Layout from '../../components/Layout';
@@ -49,7 +50,7 @@ function AdminDashboard() {
     if (!userInfo) {
       router.push('/login');
     }
-    const fetchOrders = async () => {
+    const fetchData = async () => {
       try {
         dispatch({ type: 'FETCH_REQUEST' });
         const { data } = await axios.get(`/api/admin/summary`, {
@@ -60,9 +61,8 @@ function AdminDashboard() {
         dispatch({ type: 'FETCH_FAIL', payload: getError(err) });
       }
     };
-    fetchOrders();
+    fetchData();
   }, []);
-
   return (
     <Layout title="Order History">
       <Grid container spacing={1}>
@@ -70,12 +70,12 @@ function AdminDashboard() {
           <Card className={classes.section}>
             <List>
               <NextLink href="/admin/dashboard" passHref>
-                <ListItem button component="a">
+                <ListItem selected button component="a">
                   <ListItemText primary="Admin Dashboard"></ListItemText>
                 </ListItem>
               </NextLink>
               <NextLink href="/admin/orders" passHref>
-                <ListItem selected button component="a">
+                <ListItem button component="a">
                   <ListItemText primary="Orders"></ListItemText>
                 </ListItem>
               </NextLink>
@@ -95,12 +95,14 @@ function AdminDashboard() {
                     <Grid item md={3}>
                       <Card raised>
                         <CardContent>
-                          <Typography variant="h1">{summary.ordersPrice}</Typography>
-                          <Typography variant="h1">Sales</Typography>
+                          <Typography variant="h1">
+                            ${summary.ordersPrice}
+                          </Typography>
+                          <Typography>Sales</Typography>
                         </CardContent>
                         <CardActions>
                           <NextLink href="/admin/orders" passHref>
-                            <Button size='small' color="primary">
+                            <Button size="small" color="primary">
                               View sales
                             </Button>
                           </NextLink>
@@ -110,12 +112,14 @@ function AdminDashboard() {
                     <Grid item md={3}>
                       <Card raised>
                         <CardContent>
-                          <Typography variant="h1">{summary.ordersCount}</Typography>
-                          <Typography variant="h1">Orders</Typography>
+                          <Typography variant="h1">
+                            {summary.ordersCount}
+                          </Typography>
+                          <Typography>Orders</Typography>
                         </CardContent>
                         <CardActions>
                           <NextLink href="/admin/orders" passHref>
-                            <Button size='small' color="primary">
+                            <Button size="small" color="primary">
                               View orders
                             </Button>
                           </NextLink>
@@ -125,12 +129,14 @@ function AdminDashboard() {
                     <Grid item md={3}>
                       <Card raised>
                         <CardContent>
-                          <Typography variant="h1">{summary.productsCount}</Typography>
-                          <Typography variant="h1">Products</Typography>
+                          <Typography variant="h1">
+                            {summary.productsCount}
+                          </Typography>
+                          <Typography>Products</Typography>
                         </CardContent>
                         <CardActions>
                           <NextLink href="/admin/products" passHref>
-                            <Button size='small' color="primary">
+                            <Button size="small" color="primary">
                               View products
                             </Button>
                           </NextLink>
@@ -140,12 +146,14 @@ function AdminDashboard() {
                     <Grid item md={3}>
                       <Card raised>
                         <CardContent>
-                          <Typography variant="h1">{summary.usersCount}</Typography>
-                          <Typography variant="h1">Users</Typography>
+                          <Typography variant="h1">
+                            {summary.usersCount}
+                          </Typography>
+                          <Typography>Users</Typography>
                         </CardContent>
                         <CardActions>
                           <NextLink href="/admin/users" passHref>
-                            <Button size='small' color="primary">
+                            <Button size="small" color="primary">
                               View users
                             </Button>
                           </NextLink>
@@ -156,17 +164,26 @@ function AdminDashboard() {
                 )}
               </ListItem>
               <ListItem>
-                <Typography variant="h1" component="h1">
+                <Typography component="h1" variant="h1">
                   Sales Chart
                 </Typography>
               </ListItem>
               <ListItem>
-                Implement sales chart
-              </ListItem>
-              <ListItem>
-                <Typography variant="h1" component="h1">
-                  Sales Chart
-                </Typography>
+                <Bar
+                  data={{
+                    labels: summary.salesData.map((x) => x._id),
+                    datasets: [
+                      {
+                        label: 'Sales',
+                        backgroundColor: 'rgba(162, 222, 208, 1)',
+                        data: summary.salesData.map((x) => x.totalSales),
+                      },
+                    ],
+                  }}
+                  options={{
+                    legend: { display: true, position: 'right' },
+                  }}
+                ></Bar>
               </ListItem>
             </List>
           </Card>

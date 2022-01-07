@@ -1,6 +1,5 @@
-import bcrypt from 'bcryptjs';
 import nc from 'next-connect';
-
+import bcrypt from 'bcryptjs';
 import User from '../../../models/User';
 import db from '../../../utils/db';
 import { signToken } from '../../../utils/auth';
@@ -17,6 +16,7 @@ handler.post(async (req, res) => {
   });
   const user = await newUser.save();
   await db.disconnect();
+
   const token = signToken(user);
   res.send({
     token,

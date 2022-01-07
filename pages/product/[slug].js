@@ -10,21 +10,22 @@ import {
   Card,
   Button,
 } from '@material-ui/core';
-import axios from 'axios';
-
 import Layout from '../../components/Layout';
 import useStyles from '../../utils/styles';
 import Product from '../../models/Product';
 import db from '../../utils/db';
+import axios from 'axios';
 import { Store } from '../../utils/Store';
 import { useRouter } from 'next/router';
 
 export default function ProductScreen(props) {
   const router = useRouter();
-  const { dispatch, state } = useContext(Store);
+  const { state, dispatch } = useContext(Store);
   const { product } = props;
   const classes = useStyles();
-
+  if (!product) {
+    return <div>Product Not Found</div>;
+  }
   const addToCartHandler = async () => {
     const existItem = state.cart.cartItems.find((x) => x._id === product._id);
     const quantity = existItem ? existItem.quantity + 1 : 1;
@@ -37,9 +38,6 @@ export default function ProductScreen(props) {
     router.push('/cart');
   };
 
-  if (!product) {
-    return <div>Product Not Found</div>;
-  }
   return (
     <Layout title={product.name} description={product.description}>
       <div className={classes.section}>
@@ -108,7 +106,10 @@ export default function ProductScreen(props) {
                 </Grid>
               </ListItem>
               <ListItem>
-                <Button fullWidth variant="contained" color="primary"
+                <Button
+                  fullWidth
+                  variant="contained"
+                  color="primary"
                   onClick={addToCartHandler}
                 >
                   Add to cart
